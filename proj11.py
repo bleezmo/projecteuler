@@ -22,37 +22,87 @@ numgrid = (\
 	)
 WIDTH = len(numgrid[0])
 HEIGHT = len(numgrid)
+print("HEIGHT:",HEIGHT,"WIDTH:",WIDTH)
+def isOutOfBounds(y,x):
+	return y < 0 or x < 0 or y >= HEIGHT or x >= WIDTH
 def getProductAcross(y,x):
-	if(x < 0):
-		return False,0
 	product = 1
 	for offset in range(4):
-		if((x+offset) > WIDTH):
-			return False,0
-		product = product * numgrid[y,x+offset]
-	return True,product
+		if(isOutOfBounds(y,x+offset)):
+			return True,0
+		product = product * numgrid[y][x+offset]
+	return False,product
 
 def getMaxProductAcross(y,x):
 	largest = 0
 	for i in range(4):
 		outOfBounds,product = getProductAcross(y,x-i)
-		if(!outOfBounds && largest<product):
+		if(not outOfBounds and largest<product):
 			largest = product
+	return largest
 
 def getProductNegativeDiagonal(y,x):
-	if(y < 0 or x < 0):
-		return False,0
 	product = 1
 	for offset in range(4):
-		if((y+offset) > HEIGHT or (x+offset) > WIDTH):
-			return False,0
-		product = product * 
-		
-def main():
-	gridindex = 0
-	rowindex = 0
+		if(isOutOfBounds(y+offset,x+offset)):
+			return True,0
+		product = product * numgrid[y+offset][x+offset]
+	return False,product
+def getMaxProductNegativeDiagonal(y,x):
 	largest = 0
-	while True:
-		numgrid
+	for i in range(4):
+		outOfBounds,product = getProductNegativeDiagonal(y-i,x-i)
+		if(not outOfBounds and largest < product):
+			largest = product
+	return largest
+
+def getProductPositiveDiagonal(y,x):
+	product = 1	
+	for offset in range(4):
+		if(isOutOfBounds(y-offset,x+offset)):
+			return True,0
+		product = product * numgrid[y-offset][x+offset]
+	return False,product
+def getMaxProductPositiveDiagonal(y,x):
+	largest = 0
+	for i in range(4):
+		outOfBounds,product = getProductPositiveDiagonal(y+i,x-i)
+		if(not outOfBounds and largest < product):
+			largest = product
+	return largest
+
+def getProductVertical(y,x):
+	product = 1
+	for offset in range(4):
+		if(isOutOfBounds(y+offset,x)):
+			return True,0
+		product = product * numgrid[y+offset][x]
+	return False,product
+def getMaxProductVertical(y,x):
+	largest = 0
+	for i in range(4):
+		outOfBounds,product = getProductVertical(y-i,x)
+		if(not outOfBounds and largest < product):
+			largest = product
+	return largest
+
+
+def main():
+	x,y = 0,0
+	def max(num1,num2):
+		return num1 if num1 > num2 else num2
+	largest = 0
+	while y < HEIGHT:
+		x=0
+		while x < WIDTH:
+			largest = max(getMaxProductVertical(y,x),largest)
+			largest = max(getMaxProductAcross(y,x),largest)
+			largest = max(getMaxProductPositiveDiagonal(y,x),largest)
+			largest = max(getMaxProductNegativeDiagonal(y,x),largest)
+			print(x,y,largest)
+			x+=1
+		y+=1
+	print("The largest product is:",largest)
+
 
 main()
